@@ -1,0 +1,85 @@
+From e8e6500406c165ea892500a0a85ab566ddcf113c Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Thu, 23 Jan 2020 22:04:55 -0500
+Subject: [PATCH] Add AccountOwnerCheckEvent
+
+Allows for custom sign owner handling
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/AccountOwnerCheckEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/AccountOwnerCheckEvent.java
+new file mode 100644
+index 0000000..d4f632c
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/AccountOwnerCheckEvent.java
+@@ -0,0 +1,46 @@
++package com.Acrobot.ChestShop.Events;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class AccountOwnerCheckEvent extends Event implements Cancellable {
++  private static final HandlerList handlers = new HandlerList();
++
++  private String name;
++  private Player player;
++  private boolean b = false;
++
++  public AccountOwnerCheckEvent(Player player, String name) {
++    this.player = player;
++    this.name = name;
++  }
++
++  public Player getPlayer() {
++    return player;
++  }
++
++  public String getName() {
++    return name;
++  }
++
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++
++  //Cancelled event means player does not have access.
++  @Override
++  public boolean isCancelled() {
++    return b;
++  }
++
++  @Override
++  public void setCancelled(boolean b) {
++    this.b = b;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
+index cc3a599..c17a020 100644
+--- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
++++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
+@@ -349,7 +349,17 @@ public class NameManager implements Listener {
+             return true;
+         }
+ 
++        //ChestShopPlus Start
++        com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent event = new com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent(player, name);
++        ChestShop.callEvent(event);
++        if (event.isCancelled()) return true;
++        //ChestShopPlus End
++
+         Account account = getAccountFromShortName(name, false);
++        //ChestShopPlus Start
++        if (account == null && name.startsWith("#")) return false;
++        if (account == null) return false;
++        //ChestShopPlus End
+         return account != null && (account.getUuid().equals(player.getUniqueId())
+                 || (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName())));
+     }
+-- 
+2.20.1.windows.1
+

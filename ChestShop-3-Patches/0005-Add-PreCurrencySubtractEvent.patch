@@ -1,0 +1,93 @@
+From 115468125b0a3805d5c7e8201496bc66ceff2b99 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Thu, 23 Jan 2020 22:19:18 -0500
+Subject: [PATCH] Add PreCurrencySubtractEvent
+
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/PreCurrencySubtractEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/PreCurrencySubtractEvent.java
+new file mode 100644
+index 0000000..df64875
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/PreCurrencySubtractEvent.java
+@@ -0,0 +1,57 @@
++package com.Acrobot.ChestShop.Events;
++
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++import java.math.BigDecimal;
++import java.util.UUID;
++
++public class PreCurrencySubtractEvent extends Event implements Cancellable {
++  private static final HandlerList handlers = new HandlerList();
++
++  private UUID sender;
++  private BigDecimal amountSent;
++  private boolean b = false;
++  private boolean balanceSufficient = true;
++
++  public PreCurrencySubtractEvent(UUID sender, BigDecimal amountSent) {
++    this.sender = sender;
++    this.amountSent = amountSent;
++  }
++
++  public UUID getSender() {
++    return sender;
++  }
++
++  public BigDecimal getAmountSent() {
++    return amountSent;
++  }
++
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++
++  public boolean isBalanceSufficient() {
++    return balanceSufficient;
++  }
++
++  public void setBalanceSufficient(boolean balanceSufficient) {
++    this.balanceSufficient = balanceSufficient;
++  }
++
++  //Cancelled event means player does not have access.
++  @Override
++  public boolean isCancelled() {
++    return b;
++  }
++
++  @Override
++  public void setCancelled(boolean b) {
++    this.b = b;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
+index ddea138..40207df 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
+@@ -232,6 +232,15 @@ public class VaultListener extends EconomyAdapter {
+             return;
+         }
+ 
++        //ChestShopPlus Start
++        com.Acrobot.ChestShop.Events.PreCurrencySubtractEvent preCurrencySubtractEvent = new com.Acrobot.ChestShop.Events.PreCurrencySubtractEvent(event.getTarget(), event.getAmount());
++        ChestShop.callEvent(preCurrencySubtractEvent);
++        if(preCurrencySubtractEvent.isCancelled()) {
++            event.setSubtracted(preCurrencySubtractEvent.isBalanceSufficient());
++            return;
++        }
++        //ChestShopPlus End
++
+         World world = event.getWorld();
+         //String lastSeen = NameManager.getLastSeenName(event.getTarget());
+         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getTarget());
+-- 
+2.20.1.windows.1
+

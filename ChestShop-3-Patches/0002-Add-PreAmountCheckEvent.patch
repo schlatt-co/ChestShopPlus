@@ -1,0 +1,83 @@
+From 7334cc5704b9bea5d29c00b1f6fc43a85ef0bdd2 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Thu, 23 Jan 2020 22:08:21 -0500
+Subject: [PATCH] Add PreAmountCheckEvent
+
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/PreAmountCheckEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/PreAmountCheckEvent.java
+new file mode 100644
+index 0000000..f7a928a
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/PreAmountCheckEvent.java
+@@ -0,0 +1,47 @@
++package com.Acrobot.ChestShop.Events;
++
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++import java.math.BigDecimal;
++import java.util.UUID;
++
++public class PreAmountCheckEvent extends Event implements Cancellable {
++  private static final HandlerList handlers = new HandlerList();
++
++  private UUID account;
++  private BigDecimal amountSent;
++  private boolean b = false;
++
++  public PreAmountCheckEvent(UUID account, BigDecimal amountSent) {
++    this.account = account;
++    this.amountSent = amountSent;
++  }
++
++  public UUID getAccount() {
++    return account;
++  }
++
++  public BigDecimal getAmountSent() {
++    return amountSent;
++  }
++
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++
++  @Override
++  public boolean isCancelled() {
++    return b;
++  }
++
++  @Override
++  public void setCancelled(boolean b) {
++    this.b = b;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
+index 6d0c1cb..60c2e5a 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
+@@ -103,6 +103,15 @@ public class VaultListener extends EconomyAdapter {
+             return;
+         }
+ 
++        //ChestShopPlus Start
++        com.Acrobot.ChestShop.Events.PreAmountCheckEvent preAmountCheckEvent = new com.Acrobot.ChestShop.Events.PreAmountCheckEvent(event.getAccount(), event.getAmount());
++        ChestShop.callEvent(preAmountCheckEvent);
++        if (preAmountCheckEvent.isCancelled()) {
++            event.setAmount(BigDecimal.ZERO);
++            return;
++        }
++        //ChestShopPlus End
++
+         double balance = 0;
+         OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
+ 
+-- 
+2.20.1.windows.1
+

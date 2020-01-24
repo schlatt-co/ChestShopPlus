@@ -1,0 +1,173 @@
+From 70b302c50cc82b993dacbd755889ac93a25e2711 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Thu, 23 Jan 2020 22:30:15 -0500
+Subject: [PATCH] Add offline player transaction events
+
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerBuyEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerBuyEvent.java
+new file mode 100644
+index 0000000..40a296b
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerBuyEvent.java
+@@ -0,0 +1,53 @@
++package com.Acrobot.ChestShop.Events;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class OfflinePlayerBuyEvent extends Event implements Cancellable {
++
++  private static final HandlerList handlers = new HandlerList();
++  private boolean canceled = false;
++
++  private TransactionEvent transactionEvent;
++  private List<Player> targets = new ArrayList<>();
++
++  public OfflinePlayerBuyEvent(TransactionEvent transactionEvent) {
++    this.transactionEvent = transactionEvent;
++  }
++
++  public TransactionEvent getTransactionEvent() {
++    return transactionEvent;
++  }
++
++  public void addTarget(Player player) {
++    targets.add(player);
++  }
++
++  public List<Player> getTargets() {
++    return targets;
++  }
++
++  @Override
++  public boolean isCancelled() {
++    return this.canceled;
++  }
++
++  @Override
++  public void setCancelled(boolean canceled) {
++    this.canceled = canceled;
++  }
++
++  @Override
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerSellEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerSellEvent.java
+new file mode 100644
+index 0000000..17e7960
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerSellEvent.java
+@@ -0,0 +1,53 @@
++package com.Acrobot.ChestShop.Events;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class OfflinePlayerSellEvent extends Event implements Cancellable {
++
++  private static final HandlerList handlers = new HandlerList();
++  private boolean canceled = false;
++
++  private TransactionEvent transactionEvent;
++  private List<Player> targets = new ArrayList<>();
++
++  public OfflinePlayerSellEvent(TransactionEvent transactionEvent) {
++    this.transactionEvent = transactionEvent;
++  }
++
++  public TransactionEvent getTransactionEvent() {
++    return transactionEvent;
++  }
++
++  public void addTarget(Player player) {
++    targets.add(player);
++  }
++
++  public List<Player> getTargets() {
++    return targets;
++  }
++
++  @Override
++  public boolean isCancelled() {
++    return this.canceled;
++  }
++
++  @Override
++  public void setCancelled(boolean canceled) {
++    this.canceled = canceled;
++  }
++
++  @Override
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/TransactionMessageSender.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/TransactionMessageSender.java
+index 5cf1d23..fb902ef 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/TransactionMessageSender.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/TransactionMessageSender.java
+@@ -36,7 +36,18 @@ public class TransactionMessageSender implements Listener {
+ 
+         if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getOwnerAccount().getUuid())) {
+             Player owner = Bukkit.getPlayer(event.getOwnerAccount().getUuid());
+-            sendMessage(owner, event.getOwnerAccount().getName(), Messages.SOMEBODY_BOUGHT_FROM_YOUR_SHOP, event, "buyer", player.getName());
++            if (owner != null) { //ChestShopPlus - Offline player transaction events
++                sendMessage(owner, event.getOwnerAccount().getName(), Messages.SOMEBODY_BOUGHT_FROM_YOUR_SHOP, event, "buyer", player.getName());
++            } else { //ChestShopPlus Start
++                com.Acrobot.ChestShop.Events.OfflinePlayerBuyEvent offlinePlayerBuyEvent = new com.Acrobot.ChestShop.Events.OfflinePlayerBuyEvent(event);
++                com.Acrobot.ChestShop.ChestShop.callEvent(offlinePlayerBuyEvent);
++                if (!offlinePlayerBuyEvent.isCancelled()) {
++                    for (Player curPlayer : offlinePlayerBuyEvent.getTargets()) {
++                        sendMessage(curPlayer, event.getOwnerAccount().getName(), "%buyer bought %item for %price from the company, " + event.getOwnerAccount().getName() + "'s, shop at %world/%x/%y/%z.", event, "buyer", player.getName());
++                    }
++                }
++            }
++            //ChestShopPlus End
+         }
+     }
+     
+@@ -49,7 +60,18 @@ public class TransactionMessageSender implements Listener {
+ 
+         if (Properties.SHOW_TRANSACTION_INFORMATION_OWNER && !Toggle.isIgnoring(event.getOwnerAccount().getUuid())) {
+             Player owner = Bukkit.getPlayer(event.getOwnerAccount().getUuid());
+-            sendMessage(owner, event.getOwnerAccount().getName(), Messages.SOMEBODY_SOLD_TO_YOUR_SHOP, event, "seller", player.getName());
++            if (owner != null) { //ChestShopPlus - Offline player transaction events
++                sendMessage(owner, event.getOwnerAccount().getName(), Messages.SOMEBODY_SOLD_TO_YOUR_SHOP, event, "seller", player.getName());
++            } else { //ChestShopPlus Start
++                com.Acrobot.ChestShop.Events.OfflinePlayerSellEvent offlinePlayerSellEvent = new com.Acrobot.ChestShop.Events.OfflinePlayerSellEvent(event);
++                com.Acrobot.ChestShop.ChestShop.callEvent(offlinePlayerSellEvent);
++                if (!offlinePlayerSellEvent.isCancelled()) {
++                    for (Player curPlayer : offlinePlayerSellEvent.getTargets()) {
++                        sendMessage(curPlayer, event.getOwnerAccount().getName(), "%seller sold %item for %price to the company, " + event.getOwnerAccount().getName() + "'s, shop at %world/%x/%y/%z.", event, "seller", player.getName());
++                    }
++                }
++            }
++            //ChestShopPlus End
+         }
+     }
+     
+-- 
+2.20.1.windows.1
+
