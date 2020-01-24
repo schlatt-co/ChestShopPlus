@@ -1,0 +1,90 @@
+From 6e5ea936ef916f632db30aca944d153ee7c16422 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Fri, 24 Jan 2020 15:47:05 -0500
+Subject: [PATCH] Add sign stock indication color
+
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
+index 4aaddd7..105f430 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
+@@ -148,10 +148,10 @@ public class PlayerInteract implements Listener {
+     }
+ 
+     private static PreTransactionEvent preparePreTransactionEvent(Sign sign, Player player, Action action) {
+-        String name = sign.getLine(NAME_LINE);
+-        String quantity = sign.getLine(QUANTITY_LINE);
+-        String prices = sign.getLine(PRICE_LINE);
+-        String material = sign.getLine(ITEM_LINE);
++        String name = org.bukkit.ChatColor.stripColor(sign.getLine(NAME_LINE)); //ChestShopPlus - Sign stock color
++        String quantity = org.bukkit.ChatColor.stripColor(sign.getLine(QUANTITY_LINE)); //ChestShopPlus - Sign stock color
++        String prices = org.bukkit.ChatColor.stripColor(sign.getLine(PRICE_LINE)); //ChestShopPlus - Sign stock color
++        String material = org.bukkit.ChatColor.stripColor(sign.getLine(ITEM_LINE)); //ChestShopPlus - Sign stock color
+ 
+         AccountQueryEvent accountQueryEvent = new AccountQueryEvent(name);
+         Bukkit.getPluginManager().callEvent(accountQueryEvent);
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java
+index 904f379..91f5548 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java
+@@ -24,6 +24,20 @@ public class EconomicModule implements Listener {
+         ChestShop.callEvent(currencyTransferEvent);
+         if (!currencyTransferEvent.hasBeenTransferred()) {
+             event.setCancelled(true);
++            return; //ChestShopPlus - Sign stock color
+         }
++        //ChestShopPlus Start - Sign stock color
++        if (event.getTransactionType() == BUY) {
++            int count = 0;
++            for (org.bukkit.inventory.ItemStack stack : event.getOwnerInventory().getContents()) {
++                if (stack != null && stack.getType() == event.getStock()[0].getType()) {
++                    count += stack.getAmount();
++                }
++            }
++            com.Acrobot.ChestShop.Utils.uBlock.updateSignText(event.getSign(), count > 1);
++        } else {
++            com.Acrobot.ChestShop.Utils.uBlock.updateSignText(event.getSign(), true);
++        }
++        //ChestShopPlus End - Sign stock color
+     }
+ }
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java
+index daa9771..9781e97 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java
+@@ -69,12 +69,14 @@ public class PartialTransactionModule implements Listener {
+ 
+             if (possessedItemCount <= 0) {
+                 event.setCancelled(NOT_ENOUGH_STOCK_IN_CHEST);
++                com.Acrobot.ChestShop.Utils.uBlock.updateSignText(event.getSign(), false); //ChestShopPlus - Sign stock color
+                 return;
+             }
+ 
+             event.setExactPrice(pricePerItem.multiply(BigDecimal.valueOf(possessedItemCount)).setScale(Properties.PRICE_PRECISION, BigDecimal.ROUND_HALF_UP));
+             event.setStock(itemsHad);
+         }
++        com.Acrobot.ChestShop.Utils.uBlock.updateSignText(event.getSign(), true); //ChestShopPlus - Sign stock color
+ 
+         if (!InventoryUtil.fits(event.getStock(), event.getClientInventory())) {
+             ItemStack[] itemsFit = getItemsThatFit(event.getStock(), event.getClientInventory());
+diff --git a/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java b/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java
+index 4b39efe..95d4b8d 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java
++++ b/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java
+@@ -221,4 +221,13 @@ public class uBlock {
+     public static boolean couldBeShopContainer(InventoryHolder holder) {
+         return holder instanceof Container && couldBeShopContainer(((Container) holder).getBlock());
+     }
++
++    //ChestShopPlus Start - Sign stock color
++    public static void updateSignText(Sign sign, boolean inStock) {
++        for (int i = 0; i < 4; i++) {
++            sign.setLine(i, (inStock ? "" : org.bukkit.ChatColor.RED) + org.bukkit.ChatColor.stripColor(sign.getLine(i)));
++        }
++        sign.update();
++    }
++    //ChestShopPlus End - Sign stock color
+ }
+-- 
+2.20.1.windows.1
+
