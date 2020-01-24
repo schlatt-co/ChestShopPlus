@@ -1,0 +1,6 @@
+jdk:
+  - openjdk8
+before_install:
+   - chmod +x chestshopplus
+   - chmod -R +x scripts/
+   - ./chestshopplus b
