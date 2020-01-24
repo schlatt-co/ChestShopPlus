@@ -1,4 +1,4 @@
-From 70b302c50cc82b993dacbd755889ac93a25e2711 Mon Sep 17 00:00:00 2001
+From 4f93912276f30d12b22403b50130ed6a3e50785a Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Thu, 23 Jan 2020 22:30:15 -0500
 Subject: [PATCH] Add offline player transaction events
@@ -34,6 +34,67 @@ index 0000000..40a296b
 +
 +  public TransactionEvent getTransactionEvent() {
 +    return transactionEvent;
++  }
++
++  public void addTarget(Player player) {
++    targets.add(player);
++  }
++
++  public List<Player> getTargets() {
++    return targets;
++  }
++
++  @Override
++  public boolean isCancelled() {
++    return this.canceled;
++  }
++
++  @Override
++  public void setCancelled(boolean canceled) {
++    this.canceled = canceled;
++  }
++
++  @Override
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerErrorMessageEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerErrorMessageEvent.java
+new file mode 100644
+index 0000000..b717b99
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/OfflinePlayerErrorMessageEvent.java
+@@ -0,0 +1,54 @@
++package com.Acrobot.ChestShop.Events;
++
++import com.Acrobot.ChestShop.Database.Account;
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class OfflinePlayerErrorMessageEvent extends Event implements Cancellable {
++
++  private static final HandlerList handlers = new HandlerList();
++  private boolean canceled = false;
++
++  private Account account;
++  private List<Player> targets = new ArrayList<>();
++
++  public OfflinePlayerErrorMessageEvent(Account account) {
++    this.account = account;
++  }
++
++  public Account getAccount() {
++    return account;
 +  }
 +
 +  public void addTarget(Player player) {
@@ -168,6 +229,28 @@ index 5cf1d23..fb902ef 100644
          }
      }
      
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/ErrorMessageSender.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/ErrorMessageSender.java
+index 540c4de..3ff32a2 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/ErrorMessageSender.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/ErrorMessageSender.java
+@@ -142,6 +142,17 @@ public class ErrorMessageSender implements Listener {
+             } else {
+                 ChestShop.sendBungeeMessage(ownerAccount.getName(), replacedMessage);
+             }
++            return; //ChestShopPlus - Offline player transaction events
+         }
++        //ChestShopPlus Start - Offline player transaction events
++        com.Acrobot.ChestShop.Events.OfflinePlayerErrorMessageEvent offlinePlayerErrorMessageEvent = new com.Acrobot.ChestShop.Events.OfflinePlayerErrorMessageEvent(ownerAccount);
++        ChestShop.callEvent(offlinePlayerErrorMessageEvent);
++        String replacedMsg = message.replace("%item", MaterialUtil.getItemList(stock));
++        if (!offlinePlayerErrorMessageEvent.isCancelled()) {
++            for (Player curPlayer : offlinePlayerErrorMessageEvent.getTargets()) {
++                curPlayer.sendMessage(replacedMsg);
++            }
++        }
++        //ChestShopPlus End - Offline player transaction events
+     }
+ }
 -- 
 2.20.1.windows.1
 
