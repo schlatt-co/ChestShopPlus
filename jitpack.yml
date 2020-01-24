@@ -3,4 +3,5 @@ jdk:
 before_install:
    - chmod +x chestshopplus
    - chmod -R +x scripts/
+install:
    - ./chestshopplus b
