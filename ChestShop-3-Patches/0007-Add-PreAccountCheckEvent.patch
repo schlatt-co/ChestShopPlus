@@ -1,4 +1,4 @@
-From 4e250827ec5d1f03f4d77498ebfbdd121d7781d0 Mon Sep 17 00:00:00 2001
+From b4af5ec3e57ff190f72210a03464988d3b852579 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Thu, 23 Jan 2020 23:01:38 -0500
 Subject: [PATCH] Add PreAccountCheckEvent
@@ -14,7 +14,7 @@ index 2307ce5..5d11dd5 100644
  public class AccountCheckEvent extends Event {
 +    private com.Acrobot.ChestShop.Database.Account accountObj; //ChestShopPlus - PreAccountCheckEvent
      private static final HandlerList handlers = new HandlerList();
-
+ 
      boolean outcome = false;
 @@ -65,4 +66,14 @@ public class AccountCheckEvent extends Event {
      public static HandlerList getHandlerList() {
@@ -88,7 +88,7 @@ index 40207df..be49ebf 100644
 @@ -170,6 +170,15 @@ public class VaultListener extends EconomyAdapter {
              return;
          }
-
+ 
 +        //ChestShopPlus Start
 +        com.Acrobot.ChestShop.Events.PreAccountCheckEvent preAccountCheckEvent = new com.Acrobot.ChestShop.Events.PreAccountCheckEvent(event.getAccountObj());
 +        ChestShop.callEvent(preAccountCheckEvent);
@@ -113,5 +113,6 @@ index b61fdfc..4aaddd7 100644
              Bukkit.getPluginManager().callEvent(event);
              if(!event.hasAccount()) {
                  player.sendMessage(Messages.prefix(Messages.NO_ECONOMY_ACCOUNT));
---
+-- 
 2.20.1.windows.1
+
