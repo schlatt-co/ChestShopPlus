@@ -1,4 +1,4 @@
-From 830a6f1b7eaf4bfba3917e5ad9c95cb38f524c01 Mon Sep 17 00:00:00 2001
+From 97facd4183bcc515955d070e3de5d2711e47caca Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Fri, 24 Jan 2020 15:47:05 -0500
 Subject: [PATCH] Add sign stock indication color
@@ -152,10 +152,10 @@ index 9c2b611..400b7de 100644
              Account account = accountQueryEvent.getAccount();
              if (account != null && !account.getUuid().equals(player.getUniqueId())) {
 diff --git a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
-index 3ad8ac8..f3c5199 100644
+index ba2485e..83b5563 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
-@@ -119,7 +119,7 @@ public class ChestShopSign {
+@@ -120,7 +120,7 @@ public class ChestShopSign {
          if (player == null) return false;
          if (sign == null) return true;
  
@@ -164,7 +164,7 @@ index 3ad8ac8..f3c5199 100644
          if (name == null || name.isEmpty()) return true;
  
          return NameManager.canUseName(player, base, name);
-@@ -128,7 +128,7 @@ public class ChestShopSign {
+@@ -129,7 +129,7 @@ public class ChestShopSign {
      public static boolean isOwner(Player player, Sign sign) {
          if (player == null || sign == null) return false;
  
