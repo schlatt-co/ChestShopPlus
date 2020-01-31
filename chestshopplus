@@ -10,6 +10,9 @@ case "$1" in
     "m" | "up" | "merge")
         scripts/mergeUpstream.sh
     ;;
+    "c" | "upc" | "upstreamcommit")
+        scripts/upstreamCommit.sh
+    ;;
     "b" | "build")
         scripts/build.sh --jar
     ;;
