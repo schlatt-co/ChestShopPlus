@@ -1,0 +1,382 @@
+From 0b3971135aa0296b76fe44deb3bc19af5d0d5aa7 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Fri, 31 Jan 2020 21:09:31 -0500
+Subject: [PATCH] Revert locale fixes
+
+The locale fix causes issues with our patches and possibly ChestShop
+in general. Once a fix is found either here or upstream, this patch
+will be dropped.
+
+diff --git a/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java b/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java
+index 86127e8..e62be3b 100644
+--- a/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java
++++ b/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java
+@@ -8,7 +8,6 @@ import java.io.IOException;
+ import java.lang.reflect.Field;
+ import java.lang.reflect.Modifier;
+ import java.util.HashMap;
+-import java.util.Locale;
+ import java.util.Map;
+ import java.util.Scanner;
+ 
+@@ -31,7 +30,7 @@ public class Configuration {
+         @Override
+         public <T> Object parseToJava(Class<T> type, Object object) {
+             if (object instanceof String && type.isEnum()) {
+-                return Enum.valueOf((Class<? extends Enum>) type, ((String) object).toUpperCase(Locale.ROOT));
++                return Enum.valueOf((Class<? extends Enum>) type, ((String) object).toUpperCase());
+             }
+             return object;
+         }
+@@ -63,8 +62,8 @@ public class Configuration {
+                 try {
+                     if (config.isSet(path)) {
+                         field.set(null, getParser(field).parseToJava(field.getType(), config.get(path)));
+-                    } else if (config.isSet(path.toLowerCase(Locale.ROOT))) {
+-                        field.set(null, getParser(field).parseToJava(field.getType(), config.get(path.toLowerCase(Locale.ROOT))));
++                    } else if (config.isSet(path.toLowerCase())) {
++                        field.set(null, getParser(field).parseToJava(field.getType(), config.get(path.toLowerCase())));
+                     } else {
+                         if (field.isAnnotationPresent(PrecededBySpace.class)) {
+                             writer.newLine();
+@@ -132,7 +131,7 @@ public class Configuration {
+      * @param valueParser The parser itself
+      */
+     public static void registerParser(String name, ValueParser valueParser) {
+-        parsers.put(name.toLowerCase(Locale.ROOT), valueParser);
++        parsers.put(name.toLowerCase(), valueParser);
+     }
+ 
+     /**
+@@ -141,7 +140,7 @@ public class Configuration {
+      * @return The parser or null if it doesn't exist
+      */
+     public static ValueParser getParser(String name) {
+-        return parsers.get(name.toLowerCase(Locale.ROOT));
++        return parsers.get(name.toLowerCase());
+     }
+ 
+     /**
+diff --git a/src/main/java/com/Acrobot/Breeze/Utils/MaterialUtil.java b/src/main/java/com/Acrobot/Breeze/Utils/MaterialUtil.java
+index ee6801e..c0f664b 100644
+--- a/src/main/java/com/Acrobot/Breeze/Utils/MaterialUtil.java
++++ b/src/main/java/com/Acrobot/Breeze/Utils/MaterialUtil.java
+@@ -26,7 +26,6 @@ import org.yaml.snakeyaml.nodes.Tag;
+ import java.util.ArrayList;
+ import java.util.Collection;
+ import java.util.List;
+-import java.util.Locale;
+ import java.util.Map;
+ import java.util.logging.Level;
+ import java.util.regex.Matcher;
+@@ -128,7 +127,7 @@ public class MaterialUtil {
+      * @return Material found
+      */
+     public static Material getMaterial(String name) {
+-        String formatted = name.replaceAll("([a-z])([A-Z1-9])", "$1_$2").replace(' ', '_').toUpperCase(Locale.ROOT);
++        String formatted = name.replaceAll("([a-z])([A-Z1-9])", "$1_$2").replace(' ', '_').toUpperCase();
+ 
+         Material material = MATERIAL_CACHE.get(formatted);
+         if (material != null) {
+@@ -395,10 +394,10 @@ public class MaterialUtil {
+     private static class EnumParser<E extends Enum<E>> {
+         private E parse(String name, E[] values) {
+             try {
+-                return E.valueOf(values[0].getDeclaringClass(), name.toUpperCase(Locale.ROOT));
++                return E.valueOf(values[0].getDeclaringClass(), name.toUpperCase());
+             } catch (IllegalArgumentException exception) {
+                 E currentEnum = null;
+-                String[] typeParts = name.replaceAll("([a-z])([A-Z1-9])", "$1_$2").toUpperCase(Locale.ROOT).split("[ _]");
++                String[] typeParts = name.replaceAll("([a-z])([A-Z1-9])", "$1_$2").toUpperCase().split("[ _]");
+                 int length = Short.MAX_VALUE;
+                 for (E e : values) {
+                     String enumName = e.name();
+diff --git a/src/main/java/com/Acrobot/Breeze/Utils/PriceUtil.java b/src/main/java/com/Acrobot/Breeze/Utils/PriceUtil.java
+index f4601b9..06be8d9 100644
+--- a/src/main/java/com/Acrobot/Breeze/Utils/PriceUtil.java
++++ b/src/main/java/com/Acrobot/Breeze/Utils/PriceUtil.java
+@@ -1,7 +1,6 @@
+ package com.Acrobot.Breeze.Utils;
+ 
+ import java.math.BigDecimal;
+-import java.util.Locale;
+ 
+ /**
+  * @author Acrobot
+@@ -24,8 +23,8 @@ public class PriceUtil {
+      * @return exact price
+      */
+     public static BigDecimal getExact(String text, char indicator) {
+-        String[] split = text.replace(" ", "").toLowerCase(Locale.ROOT).split(":");
+-        String character = String.valueOf(indicator).toLowerCase(Locale.ROOT);
++        String[] split = text.replace(" ", "").toLowerCase().split(":");
++        String character = String.valueOf(indicator).toLowerCase();
+ 
+         for (String part : split) {
+             if (!part.startsWith(character) && !part.endsWith(character)) {
+diff --git a/src/main/java/com/Acrobot/Breeze/Utils/StringUtil.java b/src/main/java/com/Acrobot/Breeze/Utils/StringUtil.java
+index 302a515..eeeaef8 100644
+--- a/src/main/java/com/Acrobot/Breeze/Utils/StringUtil.java
++++ b/src/main/java/com/Acrobot/Breeze/Utils/StringUtil.java
+@@ -4,7 +4,6 @@ import org.apache.commons.lang.WordUtils;
+ import org.bukkit.ChatColor;
+ 
+ import java.util.Collection;
+-import java.util.Locale;
+ 
+ /**
+  * @author Acrobot
+@@ -19,12 +18,9 @@ public class StringUtil {
+      * @return Reformatted string
+      */
+     public static String capitalizeFirstLetter(String string, char separator) {
+-        if (string == null || string.isEmpty()) {
+-            return string;
+-        }
+         char[] separators = new char[]{separator};
+ 
+-        return WordUtils.capitalize(string.toLowerCase(Locale.ROOT), separators).replace(String.valueOf(separator), " ");
++        return WordUtils.capitalizeFully(string, separators).replace(String.valueOf(separator), " ");
+     }
+ 
+     /**
+@@ -32,7 +28,7 @@ public class StringUtil {
+      *
+      * @param string String to reformat
+      * @return Reformatted string
+-     * @see StringUtil#capitalizeFirstLetter(String, char)
++     * @see com.Acrobot.Breeze.Utils.StringUtil#capitalizeFirstLetter(String, char)
+      */
+     public static String capitalizeFirstLetter(String string) {
+         return capitalizeFirstLetter(string, ' ');
+diff --git a/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java b/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
+index 6e55895..f4a7ffc 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
++++ b/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
+@@ -14,7 +14,6 @@ import java.util.Arrays;
+ import java.util.Collection;
+ import java.util.EnumSet;
+ import java.util.LinkedHashSet;
+-import java.util.Locale;
+ import java.util.Set;
+ import java.util.logging.Level;
+ 
+@@ -43,7 +42,7 @@ public class Properties {
+                             set.add((Material) o);
+                         } else if (o instanceof String) {
+                             try {
+-                                set.add(Material.getMaterial(((String) o).toUpperCase(Locale.ROOT)));
++                                set.add(Material.getMaterial(((String) o).toUpperCase()));
+                             } catch (IllegalArgumentException e) {
+                                 ChestShop.getBukkitLogger().log(Level.WARNING, o + " is not a valid Material name in the config!");
+                             }
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/PriceRestrictionModule.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/PriceRestrictionModule.java
+index 9de7a89..bec2604 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/PriceRestrictionModule.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/PriceRestrictionModule.java
+@@ -15,7 +15,6 @@ import org.bukkit.inventory.ItemStack;
+ import java.io.File;
+ import java.io.IOException;
+ import java.math.BigDecimal;
+-import java.util.Locale;
+ import java.util.logging.Level;
+ 
+ import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.BUY_PRICE_ABOVE_MAX;
+@@ -85,7 +84,7 @@ public class PriceRestrictionModule implements Listener {
+             for (String typeId : section.getKeys(false)) {
+                 Material material = Material.matchMaterial(typeId);
+                 if (material != null) {
+-                    configuration.set(sectionPath + "." + material.toString().toLowerCase(Locale.ROOT), configuration.get(sectionPath + "." + typeId));
++                    configuration.set(sectionPath + "." + material.toString().toLowerCase(), configuration.get(sectionPath + "." + typeId));
+                     configuration.set(sectionPath + "." + typeId, null);
+                 }
+             }
+@@ -102,7 +101,7 @@ public class PriceRestrictionModule implements Listener {
+             return;
+         }
+ 
+-        String itemType = material.getType().toString().toLowerCase(Locale.ROOT);
++        String itemType = material.getType().toString().toLowerCase();
+         int amount;
+         try {
+             amount = Integer.parseInt(event.getSignLine(QUANTITY_LINE));
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PermissionChecker.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PermissionChecker.java
+index 93b1d4f..b5ab7bf 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PermissionChecker.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PermissionChecker.java
+@@ -10,8 +10,6 @@ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.Listener;
+ import org.bukkit.inventory.ItemStack;
+ 
+-import java.util.Locale;
+-
+ import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.NO_PERMISSION;
+ import static com.Acrobot.ChestShop.Permission.*;
+ import static com.Acrobot.ChestShop.Signs.ChestShopSign.ITEM_LINE;
+@@ -41,7 +39,7 @@ public class PermissionChecker implements Listener {
+             return;
+         }
+ 
+-        String matID = item.getType().toString().toLowerCase(Locale.ROOT);
++        String matID = item.getType().toString().toLowerCase();
+         if (PriceUtil.hasBuyPrice(priceLine)) {
+             if (Permission.has(player, SHOP_CREATION_BUY_ID + matID)) {
+                 return;
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PriceChecker.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PriceChecker.java
+index 87260c1..9a78527 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PriceChecker.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PreShopCreation/PriceChecker.java
+@@ -7,8 +7,6 @@ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.EventPriority;
+ import org.bukkit.event.Listener;
+ 
+-import java.util.Locale;
+-
+ import static com.Acrobot.Breeze.Utils.PriceUtil.isPrice;
+ import static com.Acrobot.ChestShop.Events.PreShopCreationEvent.CreationOutcome.INVALID_PRICE;
+ import static com.Acrobot.ChestShop.Signs.ChestShopSign.PRICE_LINE;
+@@ -20,7 +18,7 @@ public class PriceChecker implements Listener {
+ 
+     @EventHandler(priority = EventPriority.LOWEST)
+     public static void onPreShopCreation(PreShopCreationEvent event) {
+-        String line = event.getSignLine(PRICE_LINE).toUpperCase(Locale.ROOT);
++        String line = event.getSignLine(PRICE_LINE).toUpperCase();
+         if (Properties.PRICE_PRECISION <= 0) {
+             line = line.replaceAll("\\.\\d*", ""); //remove too many decimal places
+         } else {
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PermissionChecker.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PermissionChecker.java
+index f8eb6ca..861b2d4 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PermissionChecker.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PermissionChecker.java
+@@ -8,8 +8,6 @@ import org.bukkit.event.EventHandler;
+ import org.bukkit.event.Listener;
+ import org.bukkit.inventory.ItemStack;
+ 
+-import java.util.Locale;
+-
+ import static com.Acrobot.ChestShop.Events.PreTransactionEvent.TransactionOutcome.CLIENT_DOES_NOT_HAVE_PERMISSION;
+ import static com.Acrobot.ChestShop.Events.TransactionEvent.TransactionType.BUY;
+ 
+@@ -27,7 +25,7 @@ public class PermissionChecker implements Listener {
+         TransactionEvent.TransactionType transactionType = event.getTransactionType();
+ 
+         for (ItemStack stock : event.getStock()) {
+-            String matID = stock.getType().toString().toLowerCase(Locale.ROOT);
++            String matID = stock.getType().toString().toLowerCase();
+ 
+             boolean hasPerm;
+ 
+diff --git a/src/main/java/com/Acrobot/ChestShop/Permission.java b/src/main/java/com/Acrobot/ChestShop/Permission.java
+index 7ffda93..f059a98 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Permission.java
++++ b/src/main/java/com/Acrobot/ChestShop/Permission.java
+@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
+ import org.bukkit.command.CommandSender;
+ import org.bukkit.entity.Player;
+ 
+-import java.util.Locale;
+ import java.util.Optional;
+ 
+ /**
+@@ -55,7 +54,7 @@ public enum Permission {
+     }
+ 
+     public static boolean has(CommandSender sender, String node) {
+-        return sender.hasPermission(node) || sender.hasPermission(node.toLowerCase(Locale.ROOT));
++        return sender.hasPermission(node) || sender.hasPermission(node.toLowerCase());
+     }
+ 
+     public static boolean otherName(Player player, String name) {
+@@ -65,15 +64,15 @@ public enum Permission {
+     public static boolean otherName(Player player, Permission base, String name) {
+         boolean hasBase = base != OTHER_NAME && otherName(player, OTHER_NAME, name);
+         if (hasBase || has(player, base + ".*")) {
+-            return !hasPermissionSetFalse(player, base+ "." + name) && !hasPermissionSetFalse(player, base + "." + name.toLowerCase(Locale.ROOT));
++            return !hasPermissionSetFalse(player, base+ "." + name) && !hasPermissionSetFalse(player, base + "." + name.toLowerCase());
+         }
+ 
+-        return has(player, base + "." + name) || has(player, base + "." + name.toLowerCase(Locale.ROOT));
++        return has(player, base + "." + name) || has(player, base + "." + name.toLowerCase());
+     }
+ 
+     private static boolean hasPermissionSetFalse(CommandSender sender, String permission) {
+         return (sender.isPermissionSet(permission) && !sender.hasPermission(permission))
+-                || (sender.isPermissionSet(permission.toLowerCase(Locale.ROOT)) && !sender.hasPermission(permission.toLowerCase(Locale.ROOT)));
++                || (sender.isPermissionSet(permission.toLowerCase()) && !sender.hasPermission(permission.toLowerCase()));
+     }
+ 
+     public static org.bukkit.permissions.Permission getPermission(Permission permission) {
+diff --git a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
+index 83b5563..f3c5199 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
++++ b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
+@@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
+ import org.bukkit.inventory.Inventory;
+ import org.bukkit.inventory.InventoryHolder;
+ 
+-import java.util.Locale;
+ import java.util.regex.Pattern;
+ 
+ /**
+@@ -57,7 +56,7 @@ public class ChestShopSign {
+ 
+     public static boolean isValid(String[] line) {
+         line = StringUtil.stripColourCodes(line);
+-        return isValidPreparedSign(line) && (line[PRICE_LINE].toUpperCase(Locale.ROOT).contains("B") || line[PRICE_LINE].toUpperCase(Locale.ROOT).contains("S")) && !line[NAME_LINE].isEmpty();
++        return isValidPreparedSign(line) && (line[PRICE_LINE].toUpperCase().contains("B") || line[PRICE_LINE].toUpperCase().contains("S")) && !line[NAME_LINE].isEmpty();
+     }
+ 
+     public static boolean isValid(Block sign) {
+diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
+index da277ac..c17a020 100644
+--- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
++++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
+@@ -22,7 +22,6 @@ import org.bukkit.event.Listener;
+ 
+ import java.sql.SQLException;
+ import java.util.Date;
+-import java.util.Locale;
+ import java.util.UUID;
+ import java.util.concurrent.ExecutionException;
+ import java.util.logging.Level;
+@@ -165,14 +164,14 @@ public class NameManager implements Listener {
+             } catch (ExecutionException ignored) {}
+         }
+ 
+-        if (account == null && searchOfflinePlayer && !invalidPlayers.contains(shortName.toLowerCase(Locale.ROOT))) {
++        if (account == null && searchOfflinePlayer && !invalidPlayers.contains(shortName.toLowerCase())) {
+             // no account with that shortname was found, try to get an offline player with that name
+             OfflinePlayer offlinePlayer = ChestShop.getBukkitServer().getOfflinePlayer(shortName);
+             if (offlinePlayer != null && offlinePlayer.getName() != null && offlinePlayer.getUniqueId() != null
+                     && offlinePlayer.getUniqueId().version() == uuidVersion) {
+                 account = storeUsername(new PlayerDTO(offlinePlayer.getUniqueId(), offlinePlayer.getName()));
+             } else {
+-                invalidPlayers.put(shortName.toLowerCase(Locale.ROOT), true);
++                invalidPlayers.put(shortName.toLowerCase(), true);
+             }
+         }
+         return account;
+diff --git a/src/main/java/com/Acrobot/ChestShop/Updater/Updater.java b/src/main/java/com/Acrobot/ChestShop/Updater/Updater.java
+index 6cacbc4..4ed8e20 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Updater/Updater.java
++++ b/src/main/java/com/Acrobot/ChestShop/Updater/Updater.java
+@@ -17,7 +17,6 @@ import java.net.MalformedURLException;
+ import java.net.URL;
+ import java.net.URLConnection;
+ import java.util.Enumeration;
+-import java.util.Locale;
+ import java.util.logging.Level;
+ import java.util.zip.ZipEntry;
+ import java.util.zip.ZipFile;
+@@ -242,7 +241,7 @@ public class Updater {
+         this.waitForThread();
+         if (this.versionType != null) {
+             for (ReleaseType type : ReleaseType.values()) {
+-                if (this.versionType.equals(type.name().toLowerCase(Locale.ROOT))) {
++                if (this.versionType.equals(type.name().toLowerCase())) {
+                     return type;
+                 }
+             }
+-- 
+2.20.1.windows.1
+

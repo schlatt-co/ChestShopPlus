@@ -1,4 +1,4 @@
-From 97facd4183bcc515955d070e3de5d2711e47caca Mon Sep 17 00:00:00 2001
+From 679c76c62381e9ede2ebb653e95e60a6777c4405 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Fri, 24 Jan 2020 15:47:05 -0500
 Subject: [PATCH] Add sign stock indication color
@@ -174,16 +174,19 @@ index ba2485e..83b5563 100644
  
          AccountQueryEvent accountQueryEvent = new AccountQueryEvent(name);
 diff --git a/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java b/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java
-index 4b39efe..95d4b8d 100644
+index 4b39efe..26911c3 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Utils/uBlock.java
-@@ -221,4 +221,13 @@ public class uBlock {
+@@ -221,4 +221,16 @@ public class uBlock {
      public static boolean couldBeShopContainer(InventoryHolder holder) {
          return holder instanceof Container && couldBeShopContainer(((Container) holder).getBlock());
      }
 +
 +    //ChestShopPlus Start - Sign stock color
 +    public static void updateSignText(Sign sign, boolean inStock) {
++        if (org.bukkit.ChatColor.stripColor(sign.getLine(0)).equalsIgnoreCase("Admin Shop")) {
++            return;
++        }
 +        for (int i = 0; i < 4; i++) {
 +            sign.setLine(i, (inStock ? "" : org.bukkit.ChatColor.RED) + org.bukkit.ChatColor.stripColor(sign.getLine(i)));
 +        }
