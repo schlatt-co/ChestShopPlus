@@ -1,0 +1,51 @@
+From 7fbce3f721d2f4641588aff88fc7b52fcee3a5a0 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Wed, 12 Feb 2020 17:35:16 -0500
+Subject: [PATCH] Add NameManager#createAccount method
+
+Allows for the creation of accounts in other plugins
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
+index c17a020..308b2e0 100644
+--- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
++++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
+@@ -168,7 +168,7 @@ public class NameManager implements Listener {
+             // no account with that shortname was found, try to get an offline player with that name
+             OfflinePlayer offlinePlayer = ChestShop.getBukkitServer().getOfflinePlayer(shortName);
+             if (offlinePlayer != null && offlinePlayer.getName() != null && offlinePlayer.getUniqueId() != null
+-                    && offlinePlayer.getUniqueId().version() == uuidVersion) {
++                && offlinePlayer.getUniqueId().version() == uuidVersion) {
+                 account = storeUsername(new PlayerDTO(offlinePlayer.getUniqueId(), offlinePlayer.getName()));
+             } else {
+                 invalidPlayers.put(shortName.toLowerCase(), true);
+@@ -262,6 +262,18 @@ public class NameManager implements Listener {
+         return null;
+     }
+ 
++    //ChestShopPlus Start
++    public static Account createAccount(Account account) {
++        try {
++            accounts.createOrUpdate(account);
++        } catch (SQLException e) {
++            ChestShop.getBukkitLogger().log(Level.WARNING, "Error while updating account " + account + ":", e);
++            return null;
++        }
++        return account;
++    }
++    //ChestShopPlus End
++
+     /**
+      * Get the short username from a full username
+      *
+@@ -361,7 +373,7 @@ public class NameManager implements Listener {
+         if (account == null) return false;
+         //ChestShopPlus End
+         return account != null && (account.getUuid().equals(player.getUniqueId())
+-                || (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName())));
++            || (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName())));
+     }
+ 
+     public static boolean isAdminShop(UUID uuid) {
+-- 
+2.20.1.windows.1
+
