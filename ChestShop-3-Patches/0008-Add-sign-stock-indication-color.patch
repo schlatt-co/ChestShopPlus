@@ -1,14 +1,14 @@
-From 679c76c62381e9ede2ebb653e95e60a6777c4405 Mon Sep 17 00:00:00 2001
+From a9701529ccd32557eec863d7d373776a0b17bc4f Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Fri, 24 Jan 2020 15:47:05 -0500
 Subject: [PATCH] Add sign stock indication color
 
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java
-index c1d9576..27c5386 100644
+index 23c5398..615d39e 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java
-@@ -134,7 +134,7 @@ public class SignBreak implements Listener {
+@@ -142,7 +142,7 @@ public class SignBreak implements Listener {
                  continue;
              }
  
