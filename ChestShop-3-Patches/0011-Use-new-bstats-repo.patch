@@ -1,11 +1,11 @@
-From 8eeb359f84df6c27c331eda07f621702b3d62b62 Mon Sep 17 00:00:00 2001
+From 8b67953da8612332c0d681f9ed4f46dc606fd755 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 7 Mar 2020 12:30:09 -0500
 Subject: [PATCH] Use new bstats repo
 
 
 diff --git a/pom.xml b/pom.xml
-index 060c011..391b06f 100644
+index 060c011..ecd8768 100644
 --- a/pom.xml
 +++ b/pom.xml
 @@ -23,7 +23,7 @@
@@ -17,6 +17,15 @@ index 060c011..391b06f 100644
          </repository>
          <repository>
              <id>vault-repo</id>
+@@ -35,7 +35,7 @@
+         </repository>
+         <repository>
+             <id>minebench-repo</id>
+-            <url>https://repo.minebench.de/</url>
++           <url>https://repo.moep.tv/</url> <!--ChestShopPlus Use new bstats repo-->
+         </repository>
+         <repository>
+             <id>local_repo</id>
 @@ -136,7 +136,7 @@
              </exclusions>
          </dependency>
