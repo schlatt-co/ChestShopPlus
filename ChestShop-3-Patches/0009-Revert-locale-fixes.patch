@@ -1,4 +1,4 @@
-From 0b3971135aa0296b76fe44deb3bc19af5d0d5aa7 Mon Sep 17 00:00:00 2001
+From 46302c8bb874f34c118d9e4f9df6f657379841c0 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Fri, 31 Jan 2020 21:09:31 -0500
 Subject: [PATCH] Revert locale fixes
@@ -8,7 +8,7 @@ in general. Once a fix is found either here or upstream, this patch
 will be dropped.
 
 diff --git a/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java b/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java
-index 86127e8..e62be3b 100644
+index f0cb42a..3913a18 100644
 --- a/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java
 +++ b/src/main/java/com/Acrobot/Breeze/Configuration/Configuration.java
 @@ -8,7 +8,6 @@ import java.io.IOException;
@@ -18,8 +18,8 @@ index 86127e8..e62be3b 100644
 -import java.util.Locale;
  import java.util.Map;
  import java.util.Scanner;
- 
-@@ -31,7 +30,7 @@ public class Configuration {
+ import java.util.logging.Level;
+@@ -34,7 +33,7 @@ public class Configuration {
          @Override
          public <T> Object parseToJava(Class<T> type, Object object) {
              if (object instanceof String && type.isEnum()) {
@@ -28,7 +28,7 @@ index 86127e8..e62be3b 100644
              }
              return object;
          }
-@@ -63,8 +62,8 @@ public class Configuration {
+@@ -85,8 +84,8 @@ public class Configuration {
                  try {
                      if (config.isSet(path)) {
                          field.set(null, getParser(field).parseToJava(field.getType(), config.get(path)));
@@ -39,7 +39,7 @@ index 86127e8..e62be3b 100644
                      } else {
                          if (field.isAnnotationPresent(PrecededBySpace.class)) {
                              writer.newLine();
-@@ -132,7 +131,7 @@ public class Configuration {
+@@ -157,7 +156,7 @@ public class Configuration {
       * @param valueParser The parser itself
       */
      public static void registerParser(String name, ValueParser valueParser) {
@@ -48,7 +48,7 @@ index 86127e8..e62be3b 100644
      }
  
      /**
-@@ -141,7 +140,7 @@ public class Configuration {
+@@ -166,7 +165,7 @@ public class Configuration {
       * @return The parser or null if it doesn't exist
       */
      public static ValueParser getParser(String name) {
@@ -150,7 +150,7 @@ index 302a515..eeeaef8 100644
      public static String capitalizeFirstLetter(String string) {
          return capitalizeFirstLetter(string, ' ');
 diff --git a/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java b/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
-index 6e55895..f4a7ffc 100644
+index e1f9c08..95aae5d 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
 @@ -14,7 +14,6 @@ import java.util.Arrays;
@@ -307,7 +307,7 @@ index 7ffda93..f059a98 100644
  
      public static org.bukkit.permissions.Permission getPermission(Permission permission) {
 diff --git a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
-index 83b5563..f3c5199 100644
+index cdbadd6..b75e832 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
 @@ -19,7 +19,6 @@ import org.bukkit.entity.Player;
