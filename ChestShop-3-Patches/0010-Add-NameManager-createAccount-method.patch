@@ -1,4 +1,4 @@
-From 7fbce3f721d2f4641588aff88fc7b52fcee3a5a0 Mon Sep 17 00:00:00 2001
+From dec3c8c127197dc7e58464d174f9bc22054c72be Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Wed, 12 Feb 2020 17:35:16 -0500
 Subject: [PATCH] Add NameManager#createAccount method
@@ -6,10 +6,10 @@ Subject: [PATCH] Add NameManager#createAccount method
 Allows for the creation of accounts in other plugins
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-index c17a020..308b2e0 100644
+index 73fc04f..6079f7d 100644
 --- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
 +++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-@@ -168,7 +168,7 @@ public class NameManager implements Listener {
+@@ -180,7 +180,7 @@ public class NameManager implements Listener {
              // no account with that shortname was found, try to get an offline player with that name
              OfflinePlayer offlinePlayer = ChestShop.getBukkitServer().getOfflinePlayer(shortName);
              if (offlinePlayer != null && offlinePlayer.getName() != null && offlinePlayer.getUniqueId() != null
@@ -18,7 +18,7 @@ index c17a020..308b2e0 100644
                  account = storeUsername(new PlayerDTO(offlinePlayer.getUniqueId(), offlinePlayer.getName()));
              } else {
                  invalidPlayers.put(shortName.toLowerCase(), true);
-@@ -262,6 +262,18 @@ public class NameManager implements Listener {
+@@ -274,6 +274,18 @@ public class NameManager implements Listener {
          return null;
      }
  
@@ -37,7 +37,7 @@ index c17a020..308b2e0 100644
      /**
       * Get the short username from a full username
       *
-@@ -361,7 +373,7 @@ public class NameManager implements Listener {
+@@ -373,7 +385,7 @@ public class NameManager implements Listener {
          if (account == null) return false;
          //ChestShopPlus End
          return account != null && (account.getUuid().equals(player.getUniqueId())

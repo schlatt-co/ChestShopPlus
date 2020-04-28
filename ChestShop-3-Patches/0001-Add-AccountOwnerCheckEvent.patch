@@ -1,4 +1,4 @@
-From 67e922abf91e3f111faf7969004e53b6877b44c5 Mon Sep 17 00:00:00 2001
+From 009cd337d381c341f5a1952f3e0cea5157043f1b Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Thu, 23 Jan 2020 22:04:55 -0500
 Subject: [PATCH] Add AccountOwnerCheckEvent
@@ -59,10 +59,10 @@ index 0000000..d4f632c
 +}
 \ No newline at end of file
 diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-index e45cfbb..da277ac 100644
+index 3b6c99a..82bac0b 100644
 --- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
 +++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-@@ -350,7 +350,17 @@ public class NameManager implements Listener {
+@@ -362,7 +362,17 @@ public class NameManager implements Listener {
              return true;
          }
  
