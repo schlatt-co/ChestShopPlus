@@ -1,6 +1,6 @@
-From 7d779ba6708f7939406abfd85e9f272516a35a19 Mon Sep 17 00:00:00 2001
+From c9b8b0e777578e2770a3be039994c7e31e70f0be Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
-Date: Fri, 31 Jan 2020 21:09:31 -0500
+Date: Sat, 2 May 2020 15:36:54 -0400
 Subject: [PATCH] Revert locale fixes
 
 The locale fix causes issues with our patches and possibly ChestShop
@@ -150,7 +150,7 @@ index 302a515..eeeaef8 100644
      public static String capitalizeFirstLetter(String string) {
          return capitalizeFirstLetter(string, ' ');
 diff --git a/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java b/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
-index d1d6a56..ac52477 100644
+index d5c8126..c6dfeb7 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Configuration/Properties.java
 @@ -14,7 +14,6 @@ import java.util.Arrays;
@@ -328,10 +328,10 @@ index cdbadd6..b75e832 100644
  
      public static boolean isValid(Block sign) {
 diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-index 82bac0b..73fc04f 100644
+index 0a1b668..17459d9 100644
 --- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
 +++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-@@ -22,7 +22,6 @@ import org.bukkit.event.Listener;
+@@ -23,7 +23,6 @@ import org.bukkit.event.Listener;
  
  import java.sql.SQLException;
  import java.util.Date;
@@ -339,7 +339,7 @@ index 82bac0b..73fc04f 100644
  import java.util.UUID;
  import java.util.concurrent.ExecutionException;
  import java.util.logging.Level;
-@@ -177,14 +176,14 @@ public class NameManager implements Listener {
+@@ -178,14 +177,14 @@ public class NameManager implements Listener {
              } catch (ExecutionException ignored) {}
          }
  

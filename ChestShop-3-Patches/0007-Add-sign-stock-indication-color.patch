@@ -1,6 +1,6 @@
-From a9701529ccd32557eec863d7d373776a0b17bc4f Mon Sep 17 00:00:00 2001
+From f40ed94b8e535d45efa0ead4ba3f0606e30b75f1 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
-Date: Fri, 24 Jan 2020 15:47:05 -0500
+Date: Sat, 2 May 2020 15:36:22 -0400
 Subject: [PATCH] Add sign stock indication color
 
 
@@ -31,7 +31,7 @@ index 89f8f65..dc1af6b 100644
          }
  
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index 4aaddd7..105f430 100644
+index 39c267f..42e0f29 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 @@ -148,10 +148,10 @@ public class PlayerInteract implements Listener {
@@ -152,7 +152,7 @@ index 9c2b611..400b7de 100644
              Account account = accountQueryEvent.getAccount();
              if (account != null && !account.getUuid().equals(player.getUniqueId())) {
 diff --git a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
-index ba2485e..83b5563 100644
+index 486162f..cdbadd6 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
 @@ -120,7 +120,7 @@ public class ChestShopSign {

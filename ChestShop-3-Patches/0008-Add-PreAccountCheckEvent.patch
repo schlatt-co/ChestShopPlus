@@ -1,6 +1,6 @@
-From b4af5ec3e57ff190f72210a03464988d3b852579 Mon Sep 17 00:00:00 2001
+From 98903394039008323f4b825b4a698d8ce83a9485 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
-Date: Thu, 23 Jan 2020 23:01:38 -0500
+Date: Sat, 2 May 2020 15:36:36 -0400
 Subject: [PATCH] Add PreAccountCheckEvent
 
 
@@ -82,7 +82,7 @@ index 0000000..6b5c128
 +}
 \ No newline at end of file
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
-index 40207df..be49ebf 100644
+index 532e995..ea1db27 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
 @@ -170,6 +170,15 @@ public class VaultListener extends EconomyAdapter {
@@ -102,7 +102,7 @@ index 40207df..be49ebf 100644
          //String lastSeen = NameManager.getLastSeenName(event.getAccount());
          OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index b61fdfc..4aaddd7 100644
+index 42e0f29..14399f4 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 @@ -166,6 +166,7 @@ public class PlayerInteract implements Listener {

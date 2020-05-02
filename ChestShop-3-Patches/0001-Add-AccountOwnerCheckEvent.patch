@@ -1,6 +1,6 @@
-From 009cd337d381c341f5a1952f3e0cea5157043f1b Mon Sep 17 00:00:00 2001
+From 52f39ce7d3969fdd699d7f9293fcd1cd33504b4d Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
-Date: Thu, 23 Jan 2020 22:04:55 -0500
+Date: Sat, 2 May 2020 15:34:17 -0400
 Subject: [PATCH] Add AccountOwnerCheckEvent
 
 Allows for custom sign owner handling
@@ -59,27 +59,22 @@ index 0000000..d4f632c
 +}
 \ No newline at end of file
 diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-index 3b6c99a..82bac0b 100644
+index 1f3aff4..0a1b668 100644
 --- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
 +++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-@@ -362,7 +362,17 @@ public class NameManager implements Listener {
+@@ -375,6 +375,12 @@ public class NameManager implements Listener {
              return true;
          }
  
 +        //ChestShopPlus Start
-+        com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent event = new com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent(player, name);
-+        ChestShop.callEvent(event);
-+        if (event.isCancelled()) return true;
++        com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent accountOwnerCheckEvent = new com.Acrobot.ChestShop.Events.AccountOwnerCheckEvent(player, name);
++        ChestShop.callEvent(accountOwnerCheckEvent);
++        if (accountOwnerCheckEvent.isCancelled()) return true;
++        if (name.startsWith("#")) return false;
 +        //ChestShopPlus End
-+
-         Account account = getAccountFromShortName(name, false);
-+        //ChestShopPlus Start
-+        if (account == null && name.startsWith("#")) return false;
-+        if (account == null) return false;
-+        //ChestShopPlus End
-         return account != null && (account.getUuid().equals(player.getUniqueId())
-                 || (!account.getName().equalsIgnoreCase(name) && Permission.otherName(player, base, account.getName())));
-     }
+         AccountQueryEvent queryEvent = new AccountQueryEvent(name);
+         queryEvent.searchOfflinePlayers(false);
+         ChestShop.callEvent(queryEvent);
 -- 
 2.20.1.windows.1
 
