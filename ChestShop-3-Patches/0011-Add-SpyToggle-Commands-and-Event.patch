@@ -1,4 +1,4 @@
-From 3203ba504d86bdc64c5d3d024c2a8e4db29a76d8 Mon Sep 17 00:00:00 2001
+From 40cecf6fe0c39cfa8a19fac044c080f8086b3cda Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Wed, 6 May 2020 19:59:46 -0400
 Subject: [PATCH] Add SpyToggle Commands and Event
@@ -234,7 +234,7 @@ index b75e832..f2e27ae 100644
      }
  
 diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
-index db7625b..0cd63cd 100644
+index db7625b..e8f779d 100644
 --- a/src/main/resources/plugin.yml
 +++ b/src/main/resources/plugin.yml
 @@ -8,6 +8,9 @@ softdepend: [Vault, Reserve, LWC, Lockette, Deadbolt, OddItem, WorldGuard, Grief
@@ -253,7 +253,7 @@ index db7625b..0cd63cd 100644
      default: op
 +  ChestShop.spytoggle:
 +    description: Allows toggling of spying on chestshops.
-+    default: true
++    default: op
    ChestShop.iteminfo:
      description: Allows user to see item info with the command.
      default: true
