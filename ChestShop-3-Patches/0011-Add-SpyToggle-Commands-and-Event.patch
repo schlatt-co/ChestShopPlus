@@ -1,0 +1,262 @@
+From 3203ba504d86bdc64c5d3d024c2a8e4db29a76d8 Mon Sep 17 00:00:00 2001
+From: JRoy <joshroy126@gmail.com>
+Date: Wed, 6 May 2020 19:59:46 -0400
+Subject: [PATCH] Add SpyToggle Commands and Event
+
+
+diff --git a/src/main/java/com/Acrobot/ChestShop/ChestShop.java b/src/main/java/com/Acrobot/ChestShop/ChestShop.java
+index 0cdd111..35f87a6 100644
+--- a/src/main/java/com/Acrobot/ChestShop/ChestShop.java
++++ b/src/main/java/com/Acrobot/ChestShop/ChestShop.java
+@@ -113,6 +113,7 @@ public class ChestShop extends JavaPlugin {
+         registerCommand("csGive", new Give(), Permission.ADMIN);
+         registerCommand("cstoggle", new Toggle(), Permission.NOTIFY_TOGGLE);
+         registerCommand("csaccess", new AccessToggle(), Permission.ACCESS_TOGGLE);
++        registerCommand("csspy", new com.Acrobot.ChestShop.Commands.SpyToggle(), Permission.SPY_TOGGLE); //ChestShopPlus - Spy Toggle
+ 
+         loadConfig();
+ 
+diff --git a/src/main/java/com/Acrobot/ChestShop/Commands/SpyToggle.java b/src/main/java/com/Acrobot/ChestShop/Commands/SpyToggle.java
+new file mode 100644
+index 0000000..9c4cd2c
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Commands/SpyToggle.java
+@@ -0,0 +1,64 @@
++package com.Acrobot.ChestShop.Commands;
++
++import com.Acrobot.ChestShop.Configuration.Messages;
++import com.Acrobot.ChestShop.Events.PreTransactionEvent;
++import com.Acrobot.ChestShop.Events.SpyToggleEvent;
++import org.apache.commons.lang.Validate;
++import org.bukkit.Bukkit;
++import org.bukkit.ChatColor;
++import org.bukkit.OfflinePlayer;
++import org.bukkit.command.Command;
++import org.bukkit.command.CommandExecutor;
++import org.bukkit.command.CommandSender;
++import org.bukkit.entity.Player;
++
++import java.util.HashSet;
++import java.util.Set;
++import java.util.UUID;
++
++public class SpyToggle implements CommandExecutor {
++  private static final Set<UUID> spyingPlayers = new HashSet<>();
++
++  public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
++    if (!(sender instanceof Player)) {
++      return false;
++    }
++
++    Player player = (Player) sender;
++
++    SpyToggleEvent event = new SpyToggleEvent(player, !isSpying(player));
++    Bukkit.getPluginManager().callEvent(event);
++    if (event.isCancelled()) {
++      player.sendMessage(ChatColor.RED + "This event was cancelled by a plugin.");
++      return true;
++    }
++
++
++    if (setSpying(player, !isSpying(player))) {
++      player.sendMessage(Messages.prefix(Messages.TOGGLE_SPY_ON));
++    } else {
++      player.sendMessage(Messages.prefix(Messages.TOGGLE_SPY_OFF));
++    }
++    return true;
++  }
++
++  public static boolean isSpying(OfflinePlayer player) {
++    return player != null && isSpying(player.getUniqueId());
++  }
++
++  private static boolean isSpying(UUID playerId) {
++    return spyingPlayers.contains(playerId);
++  }
++
++  public static boolean setSpying(Player player, boolean spying) {
++    Validate.notNull(player); // Make sure the player instance is not null, in case there are any errors in the code
++
++    if (spying) {
++      spyingPlayers.add(player.getUniqueId());
++    } else {
++      spyingPlayers.remove(player.getUniqueId());
++    }
++
++    return spying;
++  }
++}
+\ No newline at end of file
+diff --git a/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java b/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java
+index 5ab892c..eebd829 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java
++++ b/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java
+@@ -96,6 +96,10 @@ public class Messages {
+     public static String TOGGLE_ACCESS_ON = "You can no longer trade at shops that you have access to";
+     public static String TOGGLE_ACCESS_OFF = "You can now trade at shops that you have access to";
+ 
++    @PrecededBySpace
++    public static String TOGGLE_SPY_ON = "You are now able to spy on shop chests";
++    public static String TOGGLE_SPY_OFF = "You can no longer spy on shop chests";
++
+     public static String prefix(String message) {
+         return Configuration.getColoured(prefix + message);
+     }
+diff --git a/src/main/java/com/Acrobot/ChestShop/Events/SpyToggleEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/SpyToggleEvent.java
+new file mode 100644
+index 0000000..eeb26cb
+--- /dev/null
++++ b/src/main/java/com/Acrobot/ChestShop/Events/SpyToggleEvent.java
+@@ -0,0 +1,45 @@
++package com.Acrobot.ChestShop.Events;
++
++import org.bukkit.entity.Player;
++import org.bukkit.event.Cancellable;
++import org.bukkit.event.Event;
++import org.bukkit.event.HandlerList;
++
++public class SpyToggleEvent extends Event implements Cancellable {
++  private static final HandlerList handlers = new HandlerList();
++  private final Player player;
++  private final boolean isEnabling;
++  private boolean cancelled = false;
++
++  public Player getPlayer() {
++    return player;
++  }
++
++  public boolean isEnabling() {
++    return isEnabling;
++  }
++
++  public SpyToggleEvent(Player player, boolean isEnabling) {
++    this.player = player;
++    this.isEnabling = isEnabling;
++  }
++
++  @Override
++  public HandlerList getHandlers() {
++    return handlers;
++  }
++
++  public static HandlerList getHandlerList() {
++    return handlers;
++  }
++
++  @Override
++  public boolean isCancelled() {
++    return cancelled;
++  }
++
++  @Override
++  public void setCancelled(boolean b) {
++    cancelled = b;
++  }
++}
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/ChestBreak.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/ChestBreak.java
+index 7433a02..b1e7d5a 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/ChestBreak.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/ChestBreak.java
+@@ -52,6 +52,7 @@ public class ChestBreak implements Listener {
+ 
+         Sign shopSign = uBlock.findAnyNearbyShopSign(block);
+         if (breaker != null) {
++            if (com.Acrobot.ChestShop.Commands.SpyToggle.isSpying(breaker)) return true; //ChestShopPlus - Spy Toggle
+             return  ChestShopSign.hasPermission(breaker, Permission.OTHER_NAME_DESTROY, shopSign);
+         }
+         return shopSign == null;
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java
+index 615d39e..e3184de 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Block/Break/SignBreak.java
+@@ -161,6 +161,7 @@ public class SignBreak implements Listener {
+     }
+ 
+     private static boolean canDestroyShop(Player player, String name) {
++        if (com.Acrobot.ChestShop.Commands.SpyToggle.isSpying(player)) return true; //ChestShopPlus - Spy Toggle
+         return player != null && NameManager.canUseName(player, OTHER_NAME_DESTROY, name);
+     }
+ 
+diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
+index 14399f4..cce2494 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
++++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
+@@ -82,6 +82,14 @@ public class PlayerInteract implements Listener {
+             return;
+         }
+ 
++        //ChestShopPlus start - Spy Toggle
++        if (com.Acrobot.ChestShop.Commands.SpyToggle.isSpying(player) && action == RIGHT_CLICK_BLOCK) {
++            event.setCancelled(true);
++            showChestGUI(player, block, sign);
++            return;
++        }
++        //ChestShopPlus end
++
+         if (Properties.ALLOW_AUTO_ITEM_FILL && ChatColor.stripColor(sign.getLine(ITEM_LINE)).equals(AUTOFILL_CODE)) {
+             if (ChestShopSign.hasPermission(player, OTHER_NAME_CREATE, sign)) {
+                 ItemStack item = player.getInventory().getItemInMainHand();
+diff --git a/src/main/java/com/Acrobot/ChestShop/Permission.java b/src/main/java/com/Acrobot/ChestShop/Permission.java
+index f059a98..eb188bd 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Permission.java
++++ b/src/main/java/com/Acrobot/ChestShop/Permission.java
+@@ -41,6 +41,7 @@ public enum Permission {
+ 
+     NOTIFY_TOGGLE("ChestShop.toggle"),
+     ACCESS_TOGGLE("ChestShop.accesstoggle"),
++    SPY_TOGGLE("ChestShop.spytoggle"), //ChestShopPlus - Spy Toggle
+     ITEMINFO("ChestShop.iteminfo");
+ 
+     private final String permission;
+diff --git a/src/main/java/com/Acrobot/ChestShop/Security.java b/src/main/java/com/Acrobot/ChestShop/Security.java
+index 400b7de..6aa097c 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Security.java
++++ b/src/main/java/com/Acrobot/ChestShop/Security.java
+@@ -47,7 +47,7 @@ public class Security {
+         ProtectionCheckEvent event = new ProtectionCheckEvent(block, player, ignoreDefaultProtection);
+         ChestShop.callEvent(event);
+ 
+-        return event.getResult() != Event.Result.DENY;
++        return (event.getResult() != Event.Result.DENY) || com.Acrobot.ChestShop.Commands.SpyToggle.isSpying(player); //ChestShopPlus - Spy Toggle
+     }
+ 
+     public static boolean canPlaceSign(Player player, Sign sign) {
+diff --git a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
+index b75e832..f2e27ae 100644
+--- a/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
++++ b/src/main/java/com/Acrobot/ChestShop/Signs/ChestShopSign.java
+@@ -112,6 +112,7 @@ public class ChestShopSign {
+     }
+ 
+     public static boolean canAccess(Player player, Sign sign) {
++        if (com.Acrobot.ChestShop.Commands.SpyToggle.isSpying(player)) return true; //ChestShopPlus - Spy Toggle
+         return hasPermission(player, Permission.OTHER_NAME_ACCESS, sign);
+     }
+ 
+diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
+index db7625b..0cd63cd 100644
+--- a/src/main/resources/plugin.yml
++++ b/src/main/resources/plugin.yml
+@@ -8,6 +8,9 @@ softdepend: [Vault, Reserve, LWC, Lockette, Deadbolt, OddItem, WorldGuard, Grief
+ api-version: '1.13'
+ 
+ commands:
++  csspy:
++    description: Allows moderators to steal items from unsuspecting players
++    usage: /<command>
+   iteminfo:
+     aliases: [iinfo]
+     description: Lists item id and names
+@@ -78,6 +81,9 @@ permissions:
+   ChestShop.accesstoggle:
+     description: Allows toggling of trading at shops that you have access to.
+     default: op
++  ChestShop.spytoggle:
++    description: Allows toggling of spying on chestshops.
++    default: true
+   ChestShop.iteminfo:
+     description: Allows user to see item info with the command.
+     default: true
+-- 
+2.20.1.windows.1
+
