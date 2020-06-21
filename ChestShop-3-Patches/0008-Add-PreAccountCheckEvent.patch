@@ -1,11 +1,11 @@
-From 888c1857243d37a05b5b2326d769fb612d122fcc Mon Sep 17 00:00:00 2001
+From 06d767dafb900ed07cf2e63d6fd403ba31861724 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:36:36 -0400
 Subject: [PATCH] Add PreAccountCheckEvent
 
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java
-index 8e9b978..f019b69 100644
+index 8e9b978..f88dd19 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java
 @@ -11,6 +11,7 @@ import java.util.UUID;
@@ -16,6 +16,21 @@ index 8e9b978..f019b69 100644
      private static final HandlerList handlers = new HandlerList();
  
      private boolean outcome = false;
+@@ -64,4 +65,14 @@ public class AccountCheckEvent extends EconomicEvent {
+     public static HandlerList getHandlerList() {
+         return handlers;
+     }
++
++    //ChestShopPlus Start
++    public void setAccountObj(com.Acrobot.ChestShop.Database.Account accountObj) {
++        this.accountObj = accountObj;
++    }
++
++    public com.Acrobot.ChestShop.Database.Account getAccountObj() {
++        return accountObj;
++    }
++    //ChestShopPlus End
+ }
 diff --git a/src/main/java/com/Acrobot/ChestShop/Events/PreAccountCheckEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/PreAccountCheckEvent.java
 new file mode 100644
 index 0000000..6b5c128
