@@ -1,36 +1,21 @@
-From 98903394039008323f4b825b4a698d8ce83a9485 Mon Sep 17 00:00:00 2001
+From 888c1857243d37a05b5b2326d769fb612d122fcc Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:36:36 -0400
 Subject: [PATCH] Add PreAccountCheckEvent
 
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java
-index 2307ce5..5d11dd5 100644
+index 8e9b978..f019b69 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Events/Economy/AccountCheckEvent.java
-@@ -12,6 +12,7 @@ import java.util.UUID;
+@@ -11,6 +11,7 @@ import java.util.UUID;
   * @author Acrobot
   */
- public class AccountCheckEvent extends Event {
+ public class AccountCheckEvent extends EconomicEvent {
 +    private com.Acrobot.ChestShop.Database.Account accountObj; //ChestShopPlus - PreAccountCheckEvent
      private static final HandlerList handlers = new HandlerList();
  
-     boolean outcome = false;
-@@ -65,4 +66,14 @@ public class AccountCheckEvent extends Event {
-     public static HandlerList getHandlerList() {
-         return handlers;
-     }
-+
-+    //ChestShopPlus Start
-+    public void setAccountObj(com.Acrobot.ChestShop.Database.Account accountObj) {
-+        this.accountObj = accountObj;
-+    }
-+
-+    public com.Acrobot.ChestShop.Database.Account getAccountObj() {
-+        return accountObj;
-+    }
-+    //ChestShopPlus End
- }
+     private boolean outcome = false;
 diff --git a/src/main/java/com/Acrobot/ChestShop/Events/PreAccountCheckEvent.java b/src/main/java/com/Acrobot/ChestShop/Events/PreAccountCheckEvent.java
 new file mode 100644
 index 0000000..6b5c128
@@ -82,10 +67,10 @@ index 0000000..6b5c128
 +}
 \ No newline at end of file
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
-index 532e995..ea1db27 100644
+index c7426a1..3491919 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
-@@ -170,6 +170,15 @@ public class VaultListener extends EconomyAdapter {
+@@ -172,6 +172,15 @@ public class VaultListener extends EconomyAdapter {
              return;
          }
  
@@ -102,10 +87,10 @@ index 532e995..ea1db27 100644
          //String lastSeen = NameManager.getLastSeenName(event.getAccount());
          OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index 42e0f29..14399f4 100644
+index 7fdb3a3..b6f788a 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-@@ -166,6 +166,7 @@ public class PlayerInteract implements Listener {
+@@ -171,6 +171,7 @@ public class PlayerInteract implements Listener {
          // check if player exists in economy
          if (!adminShop) {
              AccountCheckEvent event = new AccountCheckEvent(account.getUuid(), player.getWorld());

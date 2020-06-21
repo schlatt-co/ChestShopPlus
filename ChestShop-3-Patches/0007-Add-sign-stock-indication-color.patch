@@ -1,4 +1,4 @@
-From f40ed94b8e535d45efa0ead4ba3f0606e30b75f1 Mon Sep 17 00:00:00 2001
+From bca64dc916ae6bd1cd4cb7d23096e68e8c05941c Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:36:22 -0400
 Subject: [PATCH] Add sign stock indication color
@@ -18,10 +18,10 @@ index 23c5398..615d39e 100644
              } else {
                  canBeBroken = false;
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/DiscountModule.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/DiscountModule.java
-index 89f8f65..dc1af6b 100644
+index 2b1cbd9..036d700 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/DiscountModule.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Modules/DiscountModule.java
-@@ -53,7 +53,7 @@ public class DiscountModule implements Listener {
+@@ -62,7 +62,7 @@ public class DiscountModule implements Listener {
  
          Player client = event.getClient();
  
@@ -31,10 +31,10 @@ index 89f8f65..dc1af6b 100644
          }
  
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index 39c267f..42e0f29 100644
+index dc18afc..7fdb3a3 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-@@ -148,10 +148,10 @@ public class PlayerInteract implements Listener {
+@@ -153,10 +153,10 @@ public class PlayerInteract implements Listener {
      }
  
      private static PreTransactionEvent preparePreTransactionEvent(Sign sign, Player player, Action action) {
@@ -63,12 +63,12 @@ index 1b28ff0..06e455e 100644
          }
  
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java
-index 904f379..91f5548 100644
+index c4b8eb4..1819c97 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PostTransaction/EconomicModule.java
 @@ -24,6 +24,20 @@ public class EconomicModule implements Listener {
          ChestShop.callEvent(currencyTransferEvent);
-         if (!currencyTransferEvent.hasBeenTransferred()) {
+         if (!currencyTransferEvent.wasHandled()) {
              event.setCancelled(true);
 +            return; //ChestShopPlus - Sign stock color
          }
@@ -88,7 +88,7 @@ index 904f379..91f5548 100644
      }
  }
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java
-index daa9771..9781e97 100644
+index 40502b8..b9b752a 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/PreTransaction/PartialTransactionModule.java
 @@ -69,12 +69,14 @@ public class PartialTransactionModule implements Listener {

@@ -1,4 +1,4 @@
-From 524ed3cf4e225fdbaf2a2327555a782a423695b9 Mon Sep 17 00:00:00 2001
+From 1d594fb61752f91866595d82b7813f6f97d2e65b Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:35:35 -0400
 Subject: [PATCH] Add PreCurrencyAddEvent
@@ -59,10 +59,10 @@ index 0000000..d68805a
 +}
 \ No newline at end of file
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
-index a6bda65..cde1464 100644
+index e7e5954..670dacd 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Economy/Plugins/VaultListener.java
-@@ -199,6 +199,15 @@ public class VaultListener extends EconomyAdapter {
+@@ -203,6 +203,15 @@ public class VaultListener extends EconomyAdapter {
              return;
          }
  

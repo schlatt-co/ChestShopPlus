@@ -1,14 +1,14 @@
-From 40cecf6fe0c39cfa8a19fac044c080f8086b3cda Mon Sep 17 00:00:00 2001
+From 5bb27eae9388fb6a5aea0bd928e59df0e878cde6 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Wed, 6 May 2020 19:59:46 -0400
 Subject: [PATCH] Add SpyToggle Commands and Event
 
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/ChestShop.java b/src/main/java/com/Acrobot/ChestShop/ChestShop.java
-index 0cdd111..35f87a6 100644
+index 18334e5..b43a47a 100644
 --- a/src/main/java/com/Acrobot/ChestShop/ChestShop.java
 +++ b/src/main/java/com/Acrobot/ChestShop/ChestShop.java
-@@ -113,6 +113,7 @@ public class ChestShop extends JavaPlugin {
+@@ -125,6 +125,7 @@ public class ChestShop extends JavaPlugin {
          registerCommand("csGive", new Give(), Permission.ADMIN);
          registerCommand("cstoggle", new Toggle(), Permission.NOTIFY_TOGGLE);
          registerCommand("csaccess", new AccessToggle(), Permission.ACCESS_TOGGLE);
@@ -88,10 +88,10 @@ index 0000000..9c4cd2c
 +}
 \ No newline at end of file
 diff --git a/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java b/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java
-index 5ab892c..eebd829 100644
+index abd5426..e1e44f1 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Configuration/Messages.java
-@@ -96,6 +96,10 @@ public class Messages {
+@@ -103,6 +103,10 @@ public class Messages {
      public static String TOGGLE_ACCESS_ON = "You can no longer trade at shops that you have access to";
      public static String TOGGLE_ACCESS_OFF = "You can now trade at shops that you have access to";
  
@@ -178,7 +178,7 @@ index 615d39e..e3184de 100644
      }
  
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index 14399f4..cce2494 100644
+index b6f788a..2504456 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 @@ -82,6 +82,14 @@ public class PlayerInteract implements Listener {
@@ -197,7 +197,7 @@ index 14399f4..cce2494 100644
              if (ChestShopSign.hasPermission(player, OTHER_NAME_CREATE, sign)) {
                  ItemStack item = player.getInventory().getItemInMainHand();
 diff --git a/src/main/java/com/Acrobot/ChestShop/Permission.java b/src/main/java/com/Acrobot/ChestShop/Permission.java
-index f059a98..eb188bd 100644
+index 01e9a35..fe8e175 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Permission.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Permission.java
 @@ -41,6 +41,7 @@ public enum Permission {
@@ -234,7 +234,7 @@ index b75e832..f2e27ae 100644
      }
  
 diff --git a/src/main/resources/plugin.yml b/src/main/resources/plugin.yml
-index db7625b..e8f779d 100644
+index cb473a9..4ed2a1c 100644
 --- a/src/main/resources/plugin.yml
 +++ b/src/main/resources/plugin.yml
 @@ -8,6 +8,9 @@ softdepend: [Vault, Reserve, LWC, Lockette, Deadbolt, OddItem, WorldGuard, Grief
@@ -247,7 +247,7 @@ index db7625b..e8f779d 100644
    iteminfo:
      aliases: [iinfo]
      description: Lists item id and names
-@@ -78,6 +81,9 @@ permissions:
+@@ -81,6 +84,9 @@ permissions:
    ChestShop.accesstoggle:
      description: Allows toggling of trading at shops that you have access to.
      default: op

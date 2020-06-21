@@ -1,4 +1,4 @@
-From c1dde264c36bb8c1c40729bf8cbf75ae946eee4f Mon Sep 17 00:00:00 2001
+From a3d035ae97bea08308d7f7f5dfa14a229062eb26 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:37:54 -0400
 Subject: [PATCH] Add NameManager#createAccount method
@@ -6,10 +6,10 @@ Subject: [PATCH] Add NameManager#createAccount method
 Allows for the creation of accounts in other plugins
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-index 17459d9..6974046 100644
+index af4e5d2..2a99aa2 100644
 --- a/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
 +++ b/src/main/java/com/Acrobot/ChestShop/UUIDs/NameManager.java
-@@ -287,6 +287,18 @@ public class NameManager implements Listener {
+@@ -296,6 +296,18 @@ public class NameManager implements Listener {
          return null;
      }
  
