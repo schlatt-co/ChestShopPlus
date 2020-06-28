@@ -1,11 +1,11 @@
-From 5bb27eae9388fb6a5aea0bd928e59df0e878cde6 Mon Sep 17 00:00:00 2001
+From be824609e0c590d91ef928b495450e035588afd0 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Wed, 6 May 2020 19:59:46 -0400
 Subject: [PATCH] Add SpyToggle Commands and Event
 
 
 diff --git a/src/main/java/com/Acrobot/ChestShop/ChestShop.java b/src/main/java/com/Acrobot/ChestShop/ChestShop.java
-index 18334e5..b43a47a 100644
+index b3b7234..538c0c0 100644
 --- a/src/main/java/com/Acrobot/ChestShop/ChestShop.java
 +++ b/src/main/java/com/Acrobot/ChestShop/ChestShop.java
 @@ -125,6 +125,7 @@ public class ChestShop extends JavaPlugin {
@@ -178,10 +178,10 @@ index 615d39e..e3184de 100644
      }
  
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index b6f788a..2504456 100644
+index e4a214a..65fece5 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-@@ -82,6 +82,14 @@ public class PlayerInteract implements Listener {
+@@ -81,6 +81,14 @@ public class PlayerInteract implements Listener {
              return;
          }
  

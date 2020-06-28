@@ -1,4 +1,4 @@
-From 06d767dafb900ed07cf2e63d6fd403ba31861724 Mon Sep 17 00:00:00 2001
+From 23be71011ed63490c657d99ce5f28c28848a341e Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:36:36 -0400
 Subject: [PATCH] Add PreAccountCheckEvent
@@ -102,10 +102,10 @@ index c7426a1..3491919 100644
          //String lastSeen = NameManager.getLastSeenName(event.getAccount());
          OfflinePlayer lastSeen = Bukkit.getOfflinePlayer(event.getAccount());
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index 7fdb3a3..b6f788a 100644
+index a0f7842..e4a214a 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-@@ -171,6 +171,7 @@ public class PlayerInteract implements Listener {
+@@ -172,6 +172,7 @@ public class PlayerInteract implements Listener {
          // check if player exists in economy
          if (!adminShop) {
              AccountCheckEvent event = new AccountCheckEvent(account.getUuid(), player.getWorld());

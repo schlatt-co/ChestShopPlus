@@ -1,4 +1,4 @@
-From bca64dc916ae6bd1cd4cb7d23096e68e8c05941c Mon Sep 17 00:00:00 2001
+From 3b62829e85144592797c395be8009b47b3ba3396 Mon Sep 17 00:00:00 2001
 From: JRoy <joshroy126@gmail.com>
 Date: Sat, 2 May 2020 15:36:22 -0400
 Subject: [PATCH] Add sign stock indication color
@@ -31,10 +31,10 @@ index 2b1cbd9..036d700 100644
          }
  
 diff --git a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-index dc18afc..7fdb3a3 100644
+index 9117149..a0f7842 100644
 --- a/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
 +++ b/src/main/java/com/Acrobot/ChestShop/Listeners/Player/PlayerInteract.java
-@@ -153,10 +153,10 @@ public class PlayerInteract implements Listener {
+@@ -154,10 +154,10 @@ public class PlayerInteract implements Listener {
      }
  
      private static PreTransactionEvent preparePreTransactionEvent(Sign sign, Player player, Action action) {
